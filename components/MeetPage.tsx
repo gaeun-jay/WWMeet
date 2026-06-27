@@ -7,7 +7,7 @@ import { calculateRanking } from "@/lib/ranking";
 import TimeGrid from "./TimeGrid";
 import RankingList from "./RankingList";
 import PlaceGallery from "./PlaceGallery";
-import { CheckCircle, Copy, Check, Trash2, ArrowLeft } from "lucide-react";
+import { CheckCircle, Copy, Check, Trash2 } from "lucide-react";
 
 type Props = {
   meeting: Meeting;
@@ -105,15 +105,9 @@ export default function MeetPage({ meeting }: Props) {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-1">
-            <a
-              href="/"
-              className="flex items-center gap-1 text-xs text-gray-400 hover:text-black transition-colors"
-            >
-              <ArrowLeft size={13} />
-              홈
-            </a>
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between">
+            <h1 className="text-base font-bold tracking-tight truncate">{meeting.title}</h1>
+            <div className="flex items-center gap-2 shrink-0 ml-3">
               <a
                 href="/"
                 className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-black border border-gray-200 rounded-lg px-2.5 py-1.5 transition-colors"
@@ -130,7 +124,6 @@ export default function MeetPage({ meeting }: Props) {
               </button>
             </div>
           </div>
-          <h1 className="text-base font-bold tracking-tight">{meeting.title}</h1>
         </div>
       </header>
 

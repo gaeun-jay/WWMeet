@@ -72,6 +72,33 @@ export default function PlaceGallery({ meetingId }: Props) {
     await supabase.from("places").update({ likes_count: newCount }).eq("id", place.id);
   }
 
+  function parseShareText(raw: string): { extractedUrl: string; extractedName: string } {
+    // URL 추출 (텍스트 어디서든)
+    const urlMatch = raw.match(/https?:\/\/[^\s]+/);
+    const extractedUrl = urlMatch?.[0] ?? "";
+
+    // 네이버/카카오 공유 형식에서 장소 이름 추출
+    // [네이버지도]\n장소이름\n주소\nhttps://...
+    const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
+    let extractedName = "";
+    const headerIdx = lines.findIndex((l) => l.startsWith("[") && l.includes("지도") || l.includes("카카오맵"));
+    if (headerIdx !== -1 && lines[headerIdx + 1]) {
+      extractedName = lines[headerIdx + 1];
+    }
+
+    return { extractedUrl, extractedName };
+  }
+
+  function handleUrlChange(raw: string) {
+    const { extractedUrl, extractedName } = parseShareText(raw);
+    if (extractedUrl) {
+      setUrl(extractedUrl);
+      if (extractedName && !placeName) setPlaceName(extractedName);
+    } else {
+      setUrl(raw);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!url.trim() || !placeName.trim()) {
@@ -139,8 +166,8 @@ export default function PlaceGallery({ meetingId }: Props) {
             <input
               type="text"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://naver.me/..."
+              onChange={(e) => handleUrlChange(e.target.value)}
+              placeholder="https://naver.me/... 또는 공유 텍스트 붙여넣기"
               className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
